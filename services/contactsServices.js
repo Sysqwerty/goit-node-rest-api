@@ -74,6 +74,12 @@ async function addContact(name, email, phone) {
   return newContact;
 }
 
+/**
+ * Updates a contact with (at least 1 field is required)
+ * @param {*} contactId
+ * @param {*} data - contact fields to update (name, email, phone)
+ * @returns updated contact
+ */
 async function updateContact(contactId, data) {
   const allContacts = await listContacts(); // Отримуємо всі контакти
   const contactIndex = allContacts.findIndex(
