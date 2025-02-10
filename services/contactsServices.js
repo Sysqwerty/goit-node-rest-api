@@ -1,6 +1,7 @@
 import path from "node:path";
 import fs from "node:fs/promises";
 import { v4 as uuid } from "uuid";
+import HttpError from "../helpers/HttpError.js";
 
 const contactsPath = path.resolve("db", "contacts.json");
 
@@ -10,10 +11,10 @@ const contactsPath = path.resolve("db", "contacts.json");
  */
 async function listContacts() {
   try {
-    return JSON.parse(await fs.readFile(contactsPath, "utf-8"));
+    const data = await fs.readFile(contactsPath, "utf-8");
+    return JSON.parse(data);
   } catch (error) {
-    console.log("Error reading contacts file: ", error.message);
-    return [];
+    throw HttpError(500, "Error reading contacts file");
   }
 }
 
@@ -28,12 +29,12 @@ async function getContactById(contactId) {
 }
 
 /**
- * Removes a contact by it's id
+ * Removes a contact by its id
  * @param {string} contactId
  * @returns removed contact or null if wasn't found
  */
 async function removeContact(contactId) {
-  const allContacts = await listContacts(); // Отримуємо всі контакти
+  const allContacts = await listContacts();
   const contactIndex = allContacts.findIndex(
     (contact) => contact.id === contactId
   );
@@ -42,15 +43,14 @@ async function removeContact(contactId) {
     return null;
   }
 
-  const [removedContact] = allContacts.splice(contactIndex, 1); // Видаляємо контакт за його індексом
+  const [removedContact] = allContacts.splice(contactIndex, 1);
 
   try {
     await fs.writeFile(contactsPath, JSON.stringify(allContacts, null, 2));
+    return removedContact;
   } catch (error) {
-    console.log("Error writing contacts file: ", error.message);
+    throw HttpError(500, "Error writing contacts file");
   }
-
-  return removedContact;
 }
 
 /**
@@ -61,27 +61,26 @@ async function removeContact(contactId) {
  * @returns new contact
  */
 async function addContact(name, email, phone) {
-  const allContacts = await listContacts(); // Отримуємо всі контакти
-  const newContact = { id: uuid(), name, email, phone }; // Створюємо новий контакт
-  allContacts.push(newContact); // Додаємо новий контакт до масиву контактів
+  const allContacts = await listContacts();
+  const newContact = { id: uuid(), name, email, phone };
+  allContacts.push(newContact);
 
   try {
     await fs.writeFile(contactsPath, JSON.stringify(allContacts, null, 2));
+    return newContact;
   } catch (error) {
-    console.log("Error writing contacts file: ", error.message);
+    throw HttpError(500, "Error writing contacts file");
   }
-
-  return newContact;
 }
 
 /**
- * Updates a contact with (at least 1 field is required)
- * @param {*} contactId
- * @param {*} data - contact fields to update (name, email, phone)
+ * Updates a contact
+ * @param {string} contactId
+ * @param {object} data - contact fields to update (name, email, phone)
  * @returns updated contact
  */
 async function updateContact(contactId, data) {
-  const allContacts = await listContacts(); // Отримуємо всі контакти
+  const allContacts = await listContacts();
   const contactIndex = allContacts.findIndex(
     (contact) => contact.id === contactId
   );
@@ -90,20 +89,15 @@ async function updateContact(contactId, data) {
     return null;
   }
 
-  const updatedContact = { ...allContacts[contactIndex] };
-  // Оновлюємо контакт тільки за тими атрибутами які прийшли
-  for (const key in data) {
-    updatedContact[key] = data[key];
-  }
-  allContacts[contactIndex] = updatedContact; // Оновлюємо контакт в масиві контактів
+  const updatedContact = { ...allContacts[contactIndex], ...data };
+  allContacts[contactIndex] = updatedContact;
 
   try {
     await fs.writeFile(contactsPath, JSON.stringify(allContacts, null, 2));
+    return updatedContact;
   } catch (error) {
-    console.log("Error writing contacts file: ", error.message);
+    throw HttpError(500, "Error writing contacts file");
   }
-
-  return updatedContact;
 }
 
 export default {
