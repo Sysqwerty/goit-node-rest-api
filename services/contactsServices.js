@@ -60,9 +60,9 @@ async function removeContact(contactId) {
  * @param {string} phone - phone of a new contact
  * @returns new contact
  */
-async function addContact(name, email, phone) {
+async function addContact(data) {
   const allContacts = await listContacts();
-  const newContact = { id: uuid(), name, email, phone };
+  const newContact = { id: uuid(), ...data };
   allContacts.push(newContact);
 
   try {
