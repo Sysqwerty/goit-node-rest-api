@@ -1,31 +1,20 @@
-import path from "node:path";
-import fs from "node:fs/promises";
-import { v4 as uuid } from "uuid";
-import HttpError from "../helpers/HttpError.js";
-
-const contactsPath = path.resolve("db", "contacts.json");
+import Contact from "../models/Contact.js";
 
 /**
- * Gets all contacts from followed by path file
+ * Gets all contacts
  * @returns {Promise<object[]>}
  */
 async function listContacts() {
-  try {
-    const data = await fs.readFile(contactsPath, "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    throw HttpError(500, "Error reading contacts file");
-  }
+  return await Contact.findAll();
 }
 
 /**
- * Gets contact by id or null if wasn't found
+ * Gets contact by id
  * @param {string} contactId
  * @returns {Promise<object>} - Contact or null
  */
 async function getContactById(contactId) {
-  const allContacts = await listContacts();
-  return allContacts.find((contact) => contact.id === contactId) || null;
+  return Contact.findByPk(contactId);
 }
 
 /**
@@ -34,70 +23,39 @@ async function getContactById(contactId) {
  * @returns removed contact or null if wasn't found
  */
 async function removeContact(contactId) {
-  const allContacts = await listContacts();
-  const contactIndex = allContacts.findIndex(
-    (contact) => contact.id === contactId
-  );
-
-  if (contactIndex === -1) {
+  const contact = await getContactById(contactId);
+  if (!contact) {
     return null;
   }
-
-  const [removedContact] = allContacts.splice(contactIndex, 1);
-
-  try {
-    await fs.writeFile(contactsPath, JSON.stringify(allContacts, null, 2));
-    return removedContact;
-  } catch (error) {
-    throw HttpError(500, "Error writing contacts file");
-  }
+  await Contact.destroy({ where: { id: contactId } });
+  return contact;
 }
 
 /**
  * Creates a new contact
- * @param {string} name - name of a new contact
- * @param {string} email - email of a new contact
- * @param {string} phone - phone of a new contact
- * @returns new contact
+ * @param {data} - new user fields
+ * @returns newly created contact
  */
 async function addContact(data) {
-  const allContacts = await listContacts();
-  const newContact = { id: uuid(), ...data };
-  allContacts.push(newContact);
-
-  try {
-    await fs.writeFile(contactsPath, JSON.stringify(allContacts, null, 2));
-    return newContact;
-  } catch (error) {
-    throw HttpError(500, "Error writing contacts file");
-  }
+  return Contact.create(data);
 }
 
 /**
  * Updates a contact
  * @param {string} contactId
- * @param {object} data - contact fields to update (name, email, phone)
+ * @param {object} data - contact fields to update
  * @returns updated contact
  */
 async function updateContact(contactId, data) {
-  const allContacts = await listContacts();
-  const contactIndex = allContacts.findIndex(
-    (contact) => contact.id === contactId
-  );
-
-  if (contactIndex === -1) {
+  const [count, updatedRows] = await Contact.update(data, {
+    where: { id: contactId },
+    returning: true,
+  });
+  if (!count) {
     return null;
   }
-
-  const updatedContact = { ...allContacts[contactIndex], ...data };
-  allContacts[contactIndex] = updatedContact;
-
-  try {
-    await fs.writeFile(contactsPath, JSON.stringify(allContacts, null, 2));
-    return updatedContact;
-  } catch (error) {
-    throw HttpError(500, "Error writing contacts file");
-  }
+  const [updatedContact] = updatedRows;
+  return updatedContact;
 }
 
 export default {
