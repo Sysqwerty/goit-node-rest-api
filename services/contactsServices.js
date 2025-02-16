@@ -6,7 +6,7 @@ import HttpError from "../helpers/HttpError.js";
 const contactsPath = path.resolve("db", "contacts.json");
 
 /**
- * Gets all contacts from followed by path file
+ * Gets all contacts
  * @returns {Promise<object[]>}
  */
 async function listContacts() {
@@ -19,7 +19,7 @@ async function listContacts() {
 }
 
 /**
- * Gets contact by id or null if wasn't found
+ * Gets contact by id
  * @param {string} contactId
  * @returns {Promise<object>} - Contact or null
  */
@@ -55,10 +55,8 @@ async function removeContact(contactId) {
 
 /**
  * Creates a new contact
- * @param {string} name - name of a new contact
- * @param {string} email - email of a new contact
- * @param {string} phone - phone of a new contact
- * @returns new contact
+ * @param {data} - new user fields (name, email, phone)
+ * @returns newly created contact
  */
 async function addContact(data) {
   const allContacts = await listContacts();
