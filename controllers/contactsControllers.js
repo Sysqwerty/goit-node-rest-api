@@ -42,3 +42,15 @@ export const updateContact = async (req, res) => {
 
   res.status(200).json(contact);
 };
+
+export const updateStatusContact = async (req, res) => {
+  const contact = await contactsService.updateStatusContact(
+    req.params.id,
+    req.body
+  );
+  if (!contact) {
+    throw HttpError(404);
+  }
+
+  res.status(200).json(contact);
+};

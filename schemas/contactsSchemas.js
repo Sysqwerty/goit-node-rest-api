@@ -16,3 +16,7 @@ export const updateContactSchema = Joi.object({
     .pattern(/^\(\d{3}\) \d{3}-\d{4}$/)
     .message("Phone number must be in the format (XXX) XXX-XXXX"),
 });
+
+export const updateStatusContactSchema = Joi.object({
+  favorite: Joi.boolean().required(),
+});

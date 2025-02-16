@@ -58,10 +58,29 @@ async function updateContact(contactId, data) {
   return updatedContact;
 }
 
+/**
+ * Updates a contact
+ * @param {string} contactId
+ * @param {object} data - favorite field to update
+ * @returns updated contact
+ */
+async function updateStatusContact(contactId, data) {
+  const [count, updatedRows] = await Contact.update(data, {
+    where: { id: contactId },
+    returning: true,
+  });
+  if (!count) {
+    return null;
+  }
+  const [updatedContact] = updatedRows;
+  return updatedContact;
+}
+
 export default {
   listContacts,
   getContactById,
   removeContact,
   addContact,
   updateContact,
+  updateStatusContact,
 };
