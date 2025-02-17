@@ -1,19 +1,22 @@
 import { Sequelize } from "sequelize";
 
+import dotenv from "dotenv";
+dotenv.config();
+
 const sequelize = new Sequelize(
-  "db_contacts_xx92",
-  "db_contacts_xx92_user",
-  "zdS9I7CdkF45v9AwD0ZIaKkuq4ouBu5v",
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
   {
-    host: "dpg-cuoa5p8gph6c73dkau8g-a.oregon-postgres.render.com", // External Database URL
-    dialect: "postgres",
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT,
     dialectOptions: {
       ssl: {
         require: true,
         rejectUnauthorized: false, // Дозволяє підключення через SSL
       },
     },
-    logging: console.log, // Вимикає логи SQL-запитів у консолі
+    logging: console.log, // Вмикає логи SQL-запитів у консолі
   }
 );
 
