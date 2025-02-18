@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import sequelize from "../db/sequelize.js"; // Імпортуємо підключення
+import sequelize from "../sequelize.js"; // Імпортуємо підключення
 
 const Contact = sequelize.define("contact", {
   name: {
