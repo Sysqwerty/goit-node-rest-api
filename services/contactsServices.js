@@ -19,7 +19,7 @@ async function getContactById(contactId) {
 
 /**
  * Removes a contact by its id
- * @param {string} contactId
+ * @param {number} contactId
  * @returns removed contact or null if wasn't found
  */
 async function removeContact(contactId) {
@@ -27,7 +27,7 @@ async function removeContact(contactId) {
   if (!contact) {
     return null;
   }
-  await Contact.destroy({ where: { id: contactId } });
+  await contact.destroy();
   return contact;
 }
 
