@@ -35,6 +35,7 @@ authRouter.get("/current", auth, ctrlWrapper(getCurrentUserController));
 
 authRouter.patch(
   "/subscription",
+  auth,
   validateBody(updateSubscriptionUserSchema),
   ctrlWrapper(updateSubscriptionUserController)
 );

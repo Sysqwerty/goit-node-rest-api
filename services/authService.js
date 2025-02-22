@@ -38,4 +38,12 @@ const logoutUser = async (userId) => {
   await User.update({ token: null }, { where: { id: userId } });
 };
 
-export default { registerUser, loginUser, logoutUser };
+const updateSubscriptionUser = async ({ userId, data }) => {
+  const [_, [userData]] = await User.update(data, {
+    where: { id: userId },
+    returning: true,
+  });
+  return userData;
+};
+
+export default { registerUser, loginUser, logoutUser, updateSubscriptionUser };

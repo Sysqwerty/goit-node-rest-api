@@ -24,6 +24,19 @@ export const logoutUserController = async (req, res) => {
   res.status(204).send();
 };
 
-export const getCurrentUserController = async (req, res) => {};
+export const getCurrentUserController = async (req, res) => {
+  res
+    .status(200)
+    .json({ email: req.user.email, subscription: req.user.subscription });
+};
 
-export const updateSubscriptionUserController = async (req, res) => {};
+export const updateSubscriptionUserController = async (req, res) => {
+  const userData = await authService.updateSubscriptionUser({
+    userId: req.user.id,
+    data: req.body,
+  });
+
+  res
+    .status(200)
+    .json({ email: userData.email, subscription: userData.subscription });
+};

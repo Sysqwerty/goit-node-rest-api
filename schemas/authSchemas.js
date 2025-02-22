@@ -12,8 +12,5 @@ export const registerLoginUserSchema = Joi.object({
 });
 
 export const updateSubscriptionUserSchema = Joi.object({
-  subscription: Joi.string()
-    .valid("starter", "pro", "business")
-    // .message("Please enter a valid subscription")
-    .required(),
+  subscription: Joi.string().valid("starter", "pro", "business").required(),
 });
