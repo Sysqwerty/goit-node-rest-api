@@ -14,8 +14,11 @@ import {
   updateStatusContactSchema,
 } from "../schemas/contactsSchemas.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
+import auth from "../middlewares/auth.js";
 
 const contactsRouter = express.Router();
+
+contactsRouter.use(auth);
 
 contactsRouter.get("/", ctrlWrapper(getAllContacts));
 

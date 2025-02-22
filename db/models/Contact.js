@@ -18,9 +18,13 @@ const Contact = sequelize.define("contact", {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  owner: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 });
 
-await Contact.sync();
-console.log("\x1b[32m%s\x1b[0m", "'Contact' model was synchronized.");
+// await Contact.sync();
+// console.log("\x1b[32m%s\x1b[0m", "'Contact' model was synchronized.");
 
 export default Contact;
