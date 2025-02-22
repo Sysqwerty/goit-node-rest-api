@@ -18,7 +18,11 @@ export const loginUserController = async (req, res) => {
   });
 };
 
-export const logoutUserController = async (req, res) => {};
+export const logoutUserController = async (req, res) => {
+  await authService.logoutUser(req.user.id);
+
+  res.status(204).send();
+};
 
 export const getCurrentUserController = async (req, res) => {};
 

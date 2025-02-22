@@ -34,4 +34,8 @@ const loginUser = async (data) => {
   return await user.update({ token }, { returning: true });
 };
 
-export default { registerUser, loginUser };
+const logoutUser = async (userId) => {
+  await User.update({ token: null }, { where: { id: userId } });
+};
+
+export default { registerUser, loginUser, logoutUser };

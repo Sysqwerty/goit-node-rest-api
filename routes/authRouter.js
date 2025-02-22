@@ -13,6 +13,7 @@ import {
   getCurrentUserController,
   updateSubscriptionUserController,
 } from "../controllers/authControllers.js";
+import auth from "../middlewares/auth.js";
 
 const authRouter = express.Router();
 
@@ -28,9 +29,9 @@ authRouter.post(
   ctrlWrapper(loginUserController)
 );
 
-authRouter.get("/logout", ctrlWrapper(logoutUserController));
+authRouter.post("/logout", auth, ctrlWrapper(logoutUserController));
 
-authRouter.get("/current", ctrlWrapper(getCurrentUserController));
+authRouter.get("/current", auth, ctrlWrapper(getCurrentUserController));
 
 authRouter.patch(
   "/subscription",
