@@ -1,29 +1,15 @@
 import Contact from "../db/models/Contact.js";
 
-/**
- * Gets all contacts
- * @returns {Promise<object[]>}
- */
-async function listContacts() {
-  return await Contact.findAll();
+async function listContacts(userId) {
+  return await Contact.findAll({ where: { owner: userId } });
 }
 
-/**
- * Gets contact by id
- * @param {string} contactId
- * @returns {Promise<object>} - Contact or null
- */
-async function getContactById(contactId) {
-  return Contact.findByPk(contactId);
+async function getContactById({ contactId, userId }) {
+  return Contact.findOne({ where: { id: contactId, owner: userId } });
 }
 
-/**
- * Removes a contact by its id
- * @param {number} contactId
- * @returns removed contact or null if wasn't found
- */
-async function removeContact(contactId) {
-  const contact = await getContactById(contactId);
+async function deleteContact({ contactId, userId }) {
+  const contact = await getContactById({ contactId, userId });
   if (!contact) {
     return null;
   }
@@ -31,24 +17,13 @@ async function removeContact(contactId) {
   return contact;
 }
 
-/**
- * Creates a new contact
- * @param {data} - new user fields
- * @returns newly created contact
- */
-async function addContact(data) {
-  return Contact.create(data);
+async function createContact({ data, userId }) {
+  return Contact.create({ ...data, owner: userId });
 }
 
-/**
- * Updates a contact
- * @param {string} contactId
- * @param {object} data - contact fields to update
- * @returns updated contact
- */
-async function updateContact(contactId, data) {
+async function updateContact({ contactId, data, userId }) {
   const [count, updatedRows] = await Contact.update(data, {
-    where: { id: contactId },
+    where: { id: contactId, owner: userId },
     returning: true,
   });
   if (!count) {
@@ -58,15 +33,9 @@ async function updateContact(contactId, data) {
   return updatedContact;
 }
 
-/**
- * Updates a contact
- * @param {string} contactId
- * @param {object} data - favorite field to update
- * @returns updated contact
- */
-async function updateStatusContact(contactId, data) {
+async function updateStatusContact({ contactId, data, userId }) {
   const [count, updatedRows] = await Contact.update(data, {
-    where: { id: contactId },
+    where: { id: contactId, owner: userId },
     returning: true,
   });
   if (!count) {
@@ -79,8 +48,8 @@ async function updateStatusContact(contactId, data) {
 export default {
   listContacts,
   getContactById,
-  removeContact,
-  addContact,
+  deleteContact,
+  createContact,
   updateContact,
   updateStatusContact,
 };
