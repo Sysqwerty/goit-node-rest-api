@@ -18,7 +18,11 @@ export const loginUser = async (req, res) => {
 };
 
 export const logoutUser = async (req, res) => {
-  await s.logoutUser(req.user.id);
+  const {
+    user: { id: userId },
+  } = req;
+
+  await s.logoutUser(userId);
 
   res.status(204).send();
 };
@@ -30,10 +34,12 @@ export const getCurrentUser = async (req, res) => {
 };
 
 export const updateSubscriptionUser = async (req, res) => {
-  const userData = await s.updateSubscriptionUser({
-    userId: req.user.id,
-    data: req.body,
-  });
+  const {
+    body,
+    user: { id: userId },
+  } = req;
+
+  const userData = await s.updateSubscriptionUser({ userId, body });
 
   res
     .status(200)

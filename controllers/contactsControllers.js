@@ -2,16 +2,23 @@ import HttpError from "../helpers/HttpError.js";
 import * as s from "../services/contactsServices.js";
 
 export const getAllContacts = async (req, res) => {
-  const contacts = await s.listContacts(req.user.id);
+  const {
+    user: { id: userId },
+    query,
+  } = req;
+
+  const contacts = await s.listContacts({ userId, query });
 
   res.status(200).json(contacts);
 };
 
 export const getOneContact = async (req, res) => {
-  const contact = await s.getContactById({
-    contactId: req.params.id,
-    userId: req.user.id,
-  });
+  const {
+    params: { id: contactId },
+    user: { id: userId },
+  } = req;
+
+  const contact = await s.getContactById({ contactId, userId });
   if (!contact) {
     throw HttpError(404);
   }
@@ -20,10 +27,12 @@ export const getOneContact = async (req, res) => {
 };
 
 export const deleteContact = async (req, res) => {
-  const contact = await s.deleteContact({
-    contactId: req.params.id,
-    userId: req.user.id,
-  });
+  const {
+    params: { id: contactId },
+    user: { id: userId },
+  } = req;
+
+  const contact = await s.deleteContact({ contactId, userId });
   if (!contact) {
     throw HttpError(404);
   }
@@ -32,10 +41,12 @@ export const deleteContact = async (req, res) => {
 };
 
 export const createContact = async (req, res) => {
-  const contact = await s.createContact({
-    data: req.body,
-    userId: req.user.id,
-  });
+  const {
+    body,
+    user: { id: userId },
+  } = req;
+
+  const contact = await s.createContact({ body, userId });
 
   res.status(201).json(contact);
 };
@@ -44,11 +55,14 @@ export const updateContact = async (req, res) => {
   if (!Object.keys(req.body).length) {
     throw HttpError(400, "Body must have at least one field");
   }
-  const contact = await s.updateContact({
-    contactId: req.params.id,
-    data: req.body,
-    userId: req.user.id,
-  });
+
+  const {
+    params: { id: contactId },
+    body,
+    user: { id: userId },
+  } = req;
+
+  const contact = await s.updateContact({ contactId, body, userId });
   if (!contact) {
     throw HttpError(404);
   }
@@ -57,11 +71,13 @@ export const updateContact = async (req, res) => {
 };
 
 export const updateStatusContact = async (req, res) => {
-  const contact = await s.updateStatusContact({
-    contactId: req.params.id,
-    data: req.body,
-    userId: req.user.id,
-  });
+  const {
+    params: { id: contactId },
+    body,
+    user: { id: userId },
+  } = req;
+
+  const contact = await s.updateStatusContact({ contactId, body, userId });
   if (!contact) {
     throw HttpError(404);
   }
