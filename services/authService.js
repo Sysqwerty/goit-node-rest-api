@@ -5,7 +5,7 @@ import User from "../db/models/User.js";
 import HttpError from "../helpers/HttpError.js";
 import checkUser from "../helpers/checkUser.js";
 
-const registerUser = async (data) => {
+export const registerUser = async (data) => {
   const user = await User.findOne({ where: { email: data.email } });
 
   if (user) {
@@ -17,7 +17,7 @@ const registerUser = async (data) => {
   return User.create({ ...data, password: hashPassword });
 };
 
-const loginUser = async (data) => {
+export const loginUser = async (data) => {
   const user = await User.findOne({ where: { email: data.email } });
 
   const isValidUser = checkUser(user, data.password);
@@ -34,16 +34,14 @@ const loginUser = async (data) => {
   return await user.update({ token }, { returning: true });
 };
 
-const logoutUser = async (userId) => {
+export const logoutUser = async (userId) => {
   await User.update({ token: null }, { where: { id: userId } });
 };
 
-const updateSubscriptionUser = async ({ userId, data }) => {
+export const updateSubscriptionUser = async ({ userId, data }) => {
   const [_, [userData]] = await User.update(data, {
     where: { id: userId },
     returning: true,
   });
   return userData;
 };
-
-export default { registerUser, loginUser, logoutUser, updateSubscriptionUser };

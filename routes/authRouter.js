@@ -6,13 +6,7 @@ import {
   updateSubscriptionUserSchema,
 } from "../schemas/authSchemas.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
-import {
-  registerUserController,
-  loginUserController,
-  logoutUserController,
-  getCurrentUserController,
-  updateSubscriptionUserController,
-} from "../controllers/authControllers.js";
+import * as c from "../controllers/authControllers.js";
 import auth from "../middlewares/auth.js";
 
 const authRouter = express.Router();
@@ -20,24 +14,24 @@ const authRouter = express.Router();
 authRouter.post(
   "/register",
   validateBody(registerLoginUserSchema),
-  ctrlWrapper(registerUserController)
+  ctrlWrapper(c.registerUser)
 );
 
 authRouter.post(
   "/login",
   validateBody(registerLoginUserSchema),
-  ctrlWrapper(loginUserController)
+  ctrlWrapper(c.loginUser)
 );
 
-authRouter.post("/logout", auth, ctrlWrapper(logoutUserController));
+authRouter.post("/logout", auth, ctrlWrapper(c.logoutUser));
 
-authRouter.get("/current", auth, ctrlWrapper(getCurrentUserController));
+authRouter.get("/current", auth, ctrlWrapper(c.getCurrentUser));
 
 authRouter.patch(
   "/subscription",
   auth,
   validateBody(updateSubscriptionUserSchema),
-  ctrlWrapper(updateSubscriptionUserController)
+  ctrlWrapper(c.updateSubscriptionUser)
 );
 
 export default authRouter;

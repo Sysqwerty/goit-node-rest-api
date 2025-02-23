@@ -1,14 +1,14 @@
 import HttpError from "../helpers/HttpError.js";
-import contactsService from "../services/contactsServices.js";
+import * as s from "../services/contactsServices.js";
 
 export const getAllContacts = async (req, res) => {
-  const contacts = await contactsService.listContacts(req.user.id);
+  const contacts = await s.listContacts(req.user.id);
 
   res.status(200).json(contacts);
 };
 
 export const getOneContact = async (req, res) => {
-  const contact = await contactsService.getContactById({
+  const contact = await s.getContactById({
     contactId: req.params.id,
     userId: req.user.id,
   });
@@ -20,7 +20,7 @@ export const getOneContact = async (req, res) => {
 };
 
 export const deleteContact = async (req, res) => {
-  const contact = await contactsService.deleteContact({
+  const contact = await s.deleteContact({
     contactId: req.params.id,
     userId: req.user.id,
   });
@@ -32,7 +32,7 @@ export const deleteContact = async (req, res) => {
 };
 
 export const createContact = async (req, res) => {
-  const contact = await contactsService.createContact({
+  const contact = await s.createContact({
     data: req.body,
     userId: req.user.id,
   });
@@ -44,7 +44,7 @@ export const updateContact = async (req, res) => {
   if (!Object.keys(req.body).length) {
     throw HttpError(400, "Body must have at least one field");
   }
-  const contact = await contactsService.updateContact({
+  const contact = await s.updateContact({
     contactId: req.params.id,
     data: req.body,
     userId: req.user.id,
@@ -57,7 +57,7 @@ export const updateContact = async (req, res) => {
 };
 
 export const updateStatusContact = async (req, res) => {
-  const contact = await contactsService.updateStatusContact({
+  const contact = await s.updateStatusContact({
     contactId: req.params.id,
     data: req.body,
     userId: req.user.id,

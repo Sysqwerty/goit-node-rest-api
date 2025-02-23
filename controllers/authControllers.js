@@ -1,16 +1,15 @@
-import HttpError from "../helpers/HttpError.js";
-import authService from "../services/authService.js";
+import * as s from "../services/authService.js";
 
-export const registerUserController = async (req, res) => {
-  const userData = await authService.registerUser(req.body);
+export const registerUser = async (req, res) => {
+  const userData = await s.registerUser(req.body);
 
   res.status(201).json({
     user: { email: userData.email, subscription: userData.subscription },
   });
 };
 
-export const loginUserController = async (req, res) => {
-  const userData = await authService.loginUser(req.body);
+export const loginUser = async (req, res) => {
+  const userData = await s.loginUser(req.body);
 
   res.status(200).json({
     token: userData.token,
@@ -18,20 +17,20 @@ export const loginUserController = async (req, res) => {
   });
 };
 
-export const logoutUserController = async (req, res) => {
-  await authService.logoutUser(req.user.id);
+export const logoutUser = async (req, res) => {
+  await s.logoutUser(req.user.id);
 
   res.status(204).send();
 };
 
-export const getCurrentUserController = async (req, res) => {
+export const getCurrentUser = async (req, res) => {
   res
     .status(200)
     .json({ email: req.user.email, subscription: req.user.subscription });
 };
 
-export const updateSubscriptionUserController = async (req, res) => {
-  const userData = await authService.updateSubscriptionUser({
+export const updateSubscriptionUser = async (req, res) => {
+  const userData = await s.updateSubscriptionUser({
     userId: req.user.id,
     data: req.body,
   });
