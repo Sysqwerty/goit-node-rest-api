@@ -12,7 +12,7 @@ export const registerUser = async (body) => {
     throw HttpError(409, "Email in use");
   }
 
-  const hashPassword = bcrypt.hashSync(body.password);
+  const hashPassword = await bcrypt.hash(body.password, 10);
 
   return User.create({ ...body, password: hashPassword });
 };
@@ -20,7 +20,7 @@ export const registerUser = async (body) => {
 export const loginUser = async (body) => {
   const user = await User.findOne({ where: { email: body.email } });
 
-  const isValidUser = checkUser(user, body.password);
+  const isValidUser = await checkUser(user, body.password);
 
   if (!isValidUser) {
     throw HttpError(401, "Email or password is wrong");

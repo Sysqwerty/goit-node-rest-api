@@ -1,4 +1,4 @@
-import express from "express";
+import { Router } from "express";
 
 import validateBody from "../decorators/validateBody.js";
 import {
@@ -9,7 +9,7 @@ import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import * as c from "../controllers/authControllers.js";
 import auth from "../middlewares/auth.js";
 
-const authRouter = express.Router();
+const authRouter = Router();
 
 authRouter.post(
   "/register",
