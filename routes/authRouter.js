@@ -8,6 +8,7 @@ import {
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import * as c from "../controllers/authControllers.js";
 import auth from "../middlewares/auth.js";
+import { upload } from "../middlewares/upload.js";
 
 const authRouter = Router();
 
@@ -32,6 +33,13 @@ authRouter.patch(
   auth,
   validateBody(updateSubscriptionUserSchema),
   ctrlWrapper(c.updateSubscriptionUser)
+);
+
+authRouter.patch(
+  "/avatars",
+  auth,
+  upload.single("avatar"),
+  ctrlWrapper(c.updateAvatar)
 );
 
 export default authRouter;

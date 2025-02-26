@@ -28,9 +28,13 @@ export const logoutUser = async (req, res) => {
 };
 
 export const getCurrentUser = async (req, res) => {
-  res
-    .status(200)
-    .json({ email: req.user.email, subscription: req.user.subscription });
+  const { email, subscription, avatarURL } = req.user;
+
+  res.status(200).json({
+    email,
+    subscription,
+    avatarURL,
+  });
 };
 
 export const updateSubscriptionUser = async (req, res) => {
@@ -44,4 +48,15 @@ export const updateSubscriptionUser = async (req, res) => {
   res
     .status(200)
     .json({ email: userData.email, subscription: userData.subscription });
+};
+
+export const updateAvatar = async (req, res) => {
+  const {
+    file,
+    user: { id: userId },
+  } = req;
+
+  const avatarURL = await s.updateAvatar({ file, userId });
+
+  res.status(200).json({ avatarURL: avatarURL });
 };

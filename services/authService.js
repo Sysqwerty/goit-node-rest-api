@@ -1,9 +1,13 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import gravatar from "gravatar";
+import path from "node:path";
+import fs from "node:fs/promises";
 
 import User from "../db/models/User.js";
 import HttpError from "../helpers/HttpError.js";
 import checkUser from "../helpers/checkUser.js";
+import { avatarsDirName, avatarsDirPath } from "../constants/pathsConstants.js";
 
 export const registerUser = async (body) => {
   const user = await User.findOne({ where: { email: body.email } });
@@ -13,8 +17,13 @@ export const registerUser = async (body) => {
   }
 
   const hashPassword = await bcrypt.hash(body.password, 10);
+  const avatarURL = gravatar.url(
+    body.email,
+    { s: "100", r: "x", d: "retro" },
+    true
+  );
 
-  return User.create({ ...body, password: hashPassword });
+  return User.create({ ...body, password: hashPassword, avatarURL });
 };
 
 export const loginUser = async (body) => {
@@ -44,4 +53,21 @@ export const updateSubscriptionUser = async ({ userId, body }) => {
     returning: true,
   });
   return userData;
+};
+
+export const updateAvatar = async ({ file, userId }) => {
+  const { path: temporaryName, originalname } = file;
+  const uniqueOriginalFileName = `${userId}-${originalname}`;
+  const fileName = path.join(avatarsDirPath, uniqueOriginalFileName);
+  try {
+    await fs.rename(temporaryName, fileName);
+  } catch (err) {
+    await fs.unlink(temporaryName);
+    return HttpError(500, "Avatar upload error");
+  }
+
+  const staticAvatarPath = `/${avatarsDirName}/${uniqueOriginalFileName}`;
+
+  await User.update({ avatarURL: staticAvatarPath }, { where: { id: userId } });
+  return staticAvatarPath;
 };

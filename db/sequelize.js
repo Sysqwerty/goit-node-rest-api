@@ -27,4 +27,6 @@ try {
   process.exit(1);
 }
 
+// sequelize.sync({ force: true });
+
 export default sequelize;

@@ -11,6 +11,7 @@ const User = sequelize.define("user", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  avatarURL: DataTypes.STRING,
   subscription: {
     type: DataTypes.ENUM,
     values: ["starter", "pro", "business"],
