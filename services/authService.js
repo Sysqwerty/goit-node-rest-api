@@ -56,9 +56,19 @@ export const updateSubscriptionUser = async ({ userId, body }) => {
 };
 
 export const updateAvatar = async ({ file, userId }) => {
+  if (!file) {
+    throw HttpError(400, "No attached file");
+  }
+
+  if (!file.mimetype.includes("image") || file.size >= 1048576) {
+    await fs.unlink(file.path);
+    throw HttpError(400, "File should be an image file less than 1 MB");
+  }
+
   const { path: temporaryName, originalname } = file;
   const uniqueOriginalFileName = `${userId}-${originalname}`;
   const fileName = path.join(avatarsDirPath, uniqueOriginalFileName);
+
   try {
     await fs.rename(temporaryName, fileName);
   } catch (err) {
@@ -69,5 +79,6 @@ export const updateAvatar = async ({ file, userId }) => {
   const staticAvatarPath = `/${avatarsDirName}/${uniqueOriginalFileName}`;
 
   await User.update({ avatarURL: staticAvatarPath }, { where: { id: userId } });
+
   return staticAvatarPath;
 };
