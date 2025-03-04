@@ -60,9 +60,9 @@ export const updateAvatar = async ({ file, userId }) => {
     throw HttpError(400, "No attached file");
   }
 
-  if (!file.mimetype.includes("image") || file.size >= 1048576) {
+  if (file.size > 1 * 1024 * 1024) {
     await fs.unlink(file.path);
-    throw HttpError(400, "File should be an image file less than 1 MB");
+    throw HttpError(400, "File size should be less than 1mb");
   }
 
   const { path: temporaryName, originalname } = file;
@@ -76,7 +76,7 @@ export const updateAvatar = async ({ file, userId }) => {
     return HttpError(500, "Avatar upload error");
   }
 
-  const staticAvatarPath = `/${avatarsDirName}/${uniqueOriginalFileName}`;
+  const staticAvatarPath = path.join(avatarsDirName, uniqueOriginalFileName);
 
   await User.update({ avatarURL: staticAvatarPath }, { where: { id: userId } });
 
