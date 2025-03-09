@@ -9,6 +9,7 @@ import HttpError from "../helpers/HttpError.js";
 import checkUser from "../helpers/checkUser.js";
 import { avatarsDirName, avatarsDirPath } from "../constants/pathsConstants.js";
 import { createToken } from "../helpers/jwt.js";
+import { sendVerificationMail } from "../helpers/mail.js";
 
 export const findUser = async (query) =>
   User.findOne({
@@ -31,7 +32,7 @@ export const registerUser = async (body) => {
 
   const verificationToken = uuid();
 
-  // await sendMail(body.email, verificationToken);
+  await sendVerificationMail(body.email, verificationToken);
 
   return User.create({
     ...body,
@@ -52,6 +53,20 @@ export const verifyUser = async (verificationToken) => {
     { verify: true, verificationToken: null },
     { where: { verificationToken } }
   );
+};
+
+export const resendVerificationMail = async (email) => {
+  const user = await findUser({ email });
+
+  if (!user) {
+    throw HttpError(404, "User not found");
+  }
+
+  if (user.verify) {
+    throw HttpError(400, "Verification has already been passed");
+  }
+
+  await sendVerificationMail(email, user.verificationToken);
 };
 
 export const loginUser = async (body) => {

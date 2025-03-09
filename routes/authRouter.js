@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import validateBody from "../decorators/validateBody.js";
 import {
+  emailUserSchema,
   registerLoginUserSchema,
   updateSubscriptionUserSchema,
 } from "../schemas/authSchemas.js";
@@ -19,6 +20,12 @@ authRouter.post(
 );
 
 authRouter.get("/verify/:verificationToken", ctrlWrapper(c.verifyUser));
+
+authRouter.post(
+  "/verify",
+  validateBody(emailUserSchema),
+  ctrlWrapper(c.resendVerificationMail)
+);
 
 authRouter.post(
   "/login",
