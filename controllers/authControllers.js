@@ -8,6 +8,14 @@ export const registerUser = async (req, res) => {
   });
 };
 
+export const verifyUser = async (req, res) => {
+  const { verificationToken } = req.params;
+
+  await s.verifyUser(verificationToken);
+
+  res.status(200).json({ message: "Verification successful" });
+};
+
 export const loginUser = async (req, res) => {
   const userData = await s.loginUser(req.body);
 

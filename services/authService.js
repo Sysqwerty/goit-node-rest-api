@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import gravatar from "gravatar";
 import path from "node:path";
 import fs from "node:fs/promises";
+import { v4 as uuid } from "uuid";
 
 import User from "../db/models/User.js";
 import HttpError from "../helpers/HttpError.js";
@@ -28,7 +29,29 @@ export const registerUser = async (body) => {
     true
   );
 
-  return User.create({ ...body, password: hashPassword, avatarURL });
+  const verificationToken = uuid();
+
+  // await sendMail(body.email, verificationToken);
+
+  return User.create({
+    ...body,
+    password: hashPassword,
+    avatarURL,
+    verificationToken,
+  });
+};
+
+export const verifyUser = async (verificationToken) => {
+  const user = await findUser({ verificationToken });
+
+  if (!user) {
+    throw HttpError(404, "User not found");
+  }
+
+  await user.update(
+    { verify: true, verificationToken: null },
+    { where: { verificationToken } }
+  );
 };
 
 export const loginUser = async (body) => {
@@ -36,8 +59,14 @@ export const loginUser = async (body) => {
 
   const isValidUser = await checkUser(user, body.password);
 
+  // verify user exist and password matches
   if (!isValidUser) {
     throw HttpError(401, "Email or password is wrong");
+  }
+
+  // verify user is activated via email
+  if (!user.verify) {
+    throw HttpError(401, "Email has not been confirmed yet");
   }
 
   const payload = { id: user.id, email: user.email };

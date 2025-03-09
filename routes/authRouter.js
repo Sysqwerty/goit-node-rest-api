@@ -18,6 +18,8 @@ authRouter.post(
   ctrlWrapper(c.registerUser)
 );
 
+authRouter.get("/verify/:verificationToken", ctrlWrapper(c.verifyUser));
+
 authRouter.post(
   "/login",
   validateBody(registerLoginUserSchema),
