@@ -1,5 +1,4 @@
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import gravatar from "gravatar";
 import path from "node:path";
 import fs from "node:fs/promises";
@@ -8,9 +7,15 @@ import User from "../db/models/User.js";
 import HttpError from "../helpers/HttpError.js";
 import checkUser from "../helpers/checkUser.js";
 import { avatarsDirName, avatarsDirPath } from "../constants/pathsConstants.js";
+import { createToken } from "../helpers/jwt.js";
+
+export const findUser = async (query) =>
+  User.findOne({
+    where: query,
+  });
 
 export const registerUser = async (body) => {
-  const user = await User.findOne({ where: { email: body.email } });
+  const user = await findUser({ email: body.email });
 
   if (user) {
     throw HttpError(409, "Email in use");
@@ -27,7 +32,7 @@ export const registerUser = async (body) => {
 };
 
 export const loginUser = async (body) => {
-  const user = await User.findOne({ where: { email: body.email } });
+  const user = await findUser({ email: body.email });
 
   const isValidUser = await checkUser(user, body.password);
 
@@ -36,9 +41,7 @@ export const loginUser = async (body) => {
   }
 
   const payload = { id: user.id, email: user.email };
-  const token = jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: "1d",
-  });
+  const token = createToken(payload);
 
   return await user.update({ token }, { returning: true });
 };

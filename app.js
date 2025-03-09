@@ -5,7 +5,6 @@ import cors from "cors";
 
 import authRouter from "./routes/authRouter.js";
 import contactsRouter from "./routes/contactsRouter.js";
-import "./config/config-passport.js";
 import { createFolderIsNotExist } from "./helpers/filesHelper.js";
 import { avatarsDirPath, uploadsDirPath } from "./constants/pathsConstants.js";
 
