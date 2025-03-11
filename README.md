@@ -1,8 +1,10 @@
 # Restfull API app with Node.js
 
+## Create `.env` file based on `.env.example`
+
 ## To run the app in:
 
-dev move:
+dev mode:
 
 ```bash
 npm run dev
