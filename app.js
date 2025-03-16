@@ -7,6 +7,7 @@ import authRouter from "./routes/authRouter.js";
 import contactsRouter from "./routes/contactsRouter.js";
 import { createFolderIsNotExist } from "./helpers/filesHelper.js";
 import { avatarsDirPath, uploadsDirPath } from "./constants/pathsConstants.js";
+import { swaggerDocs } from "./middlewares/swaggerDocs.js";
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
+app.use("/api-docs", swaggerDocs());
 
 app.use("/api/auth", authRouter);
 

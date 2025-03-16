@@ -1,0 +1,43 @@
+type: object
+required:
+  - id
+  - name
+  - email
+  - phone
+  - favorite
+  - owner
+  - createdAt
+  - updatedAt
+properties:
+  id:
+    description: "Contacts's id"
+    type: string
+    example: 1
+  name:
+    description: "Contact's name"
+    type: string
+    example: "John Doe"
+  email:
+    description: "Contact's mail"
+    type: string
+    example: "johndoe@example.com"
+  phone:
+    description: "Contact's phone"
+    type: string
+    example: "(123) 456-7890"
+  favorite:
+    description: "Contact's favorite status"
+    type: boolean
+    example: true
+  owner:
+    description: "Contact's owner id"
+    type: string
+    example: 1
+  createdAt:
+    description: "Contact's creation date"
+    type: string
+    example: "2022-01-01T00:00:00.000Z"
+  updatedAt:
+    description: "Contact's last update date"
+    type: string
+    example: "2022-01-01T00:00:00.000Z"
